@@ -27,7 +27,7 @@ int notification(String type) {
 
     Rgb colour = getColour(type);
 
-    for(int i=0 ; i<10 ; i++) {
+    for(int i=0 ; i<8 ; i++) {
         b.spin(colour.r, colour.g, colour.b, 100);
     }
     b.allLedsOff();
@@ -38,9 +38,11 @@ int notification(String type) {
 Rgb getColour(String type) {
 
     if(type == "PullRequest") {
+        // purple
         return {255,0,255};
     } else if(type == "Push") {
-        return {255,165,0};
+        // green
+        return {0, 255, 0};
     } else {
         return {0,0,0};
     }

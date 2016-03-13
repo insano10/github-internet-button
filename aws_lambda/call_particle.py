@@ -2,19 +2,28 @@ import json
 import urllib
 import urllib2
 
+def get_event_type(request_body):
+    if request_body.get('pusher') is not None:
+        return 'Push'
+    elif request_body.get('pull_request') is not None:
+        return 'PullRequest'
+    else:
+        return 'Unknown'
+
+
 def handler(event, context):
 
     repo_name = event['body']['repository']['name']
     access_token = event['particle_access_token']
     device_id = event['particle_device_id']
-    is_push = event['body'].get('pusher') is not None
-    event_type = 'Unknown'
+    event_type = get_event_type(event['body'])
 
-    print 'Received event from repository [' + repo_name + ']'
-    print 'Is push? ' + str(is_push)
 
-    if is_push:
-        event_type = 'Push'
+    # ignore pushes to branches other than master
+    if event_type == 'Push' and event['body']['ref'] != 'refs/heads/master':
+        exit()
+
+    print 'Received ' + event_type + ' event from repository [' + repo_name + ']'
 
     data = urllib.urlencode({
         'access_token': access_token,
