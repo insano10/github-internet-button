@@ -9,13 +9,13 @@ struct Rgb {
     int b;
 };
 
-Rgb getColour(int ledNum);
-int flashLed(String ledNumStr);
+Rgb getColour(String notificationType);
+int notification(String type);
 
 void setup() {
 
     Serial.begin(9600);
-    Particle.function("flash", flashLed);
+    Particle.function("notify", notification);
     b.begin();
 }
 
@@ -23,29 +23,24 @@ void loop() {
 
 }
 
+int notification(String type) {
 
-int flashLed(String ledNumStr) {
+    Rgb colour = getColour(type);
 
-    int ledNum = atoi(ledNumStr.c_str());
-    Rgb colour = getColour(ledNum);
-
-    Serial.println("Flashing LED " + ledNum);
-
-    b.ledOn(ledNum, colour.r, colour.g, colour.b);
-    delay(1000);
-    b.ledOff(ledNum);
+    for(int i=0 ; i<10 ; i++) {
+        b.spin(colour.r, colour.g, colour.b, 100);
+    }
+    b.allLedsOff();
 
     return 0;
 }
 
-Rgb getColour(int ledNum) {
+Rgb getColour(String type) {
 
-    if(ledNum == 1) {
-        return {100,0,0};
-    } else if(ledNum == 2) {
-        return {0,100,0};
-    } else if(ledNum == 3) {
-        return {0,0,100};
+    if(type == "PullRequest") {
+        return {255,0,255};
+    } else if(type == "Push") {
+        return {255,165,0};
     } else {
         return {0,0,0};
     }
