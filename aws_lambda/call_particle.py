@@ -2,10 +2,13 @@ import json
 import urllib
 import urllib2
 
+
+# bit hacky but lump pull_request and comment together as conversation comments on pull requests get notified
+# under the issue comment webhook
 def get_event_type(request_body):
     if request_body.get('pusher') is not None:
         return 'Push'
-    elif request_body.get('pull_request') is not None:
+    elif request_body.get('pull_request') or request_body.get('comment') is not None:
         return 'PullRequest'
     else:
         return 'Unknown'
